@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#5b4bff">
+<title>StatVerse — Learn Statistics Your Way</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="logo">
+      <svg viewBox="0 0 32 32" width="34" height="34" aria-hidden="true">
+        <rect width="32" height="32" rx="9" fill="rgba(255,255,255,.2)"/>
+        <rect x="7" y="16" width="4" height="9" rx="1.5" fill="#fff"/>
+        <rect x="14" y="10" width="4" height="15" rx="1.5" fill="#fff"/>
+        <rect x="21" y="6" width="4" height="19" rx="1.5" fill="#fff"/>
+      </svg>
+      <span>StatVerse</span>
+    </div>
+    <p class="tagline">Any statistics topic, explained your way — with real examples.</p>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab active" data-tab="learn" role="tab">
+    <svg viewBox="0 0 24 24"><path d="M12 3 2 8l10 5 8-4v6h2V8L12 3Zm-6 9.5V16c0 1.7 2.7 3 6 3s6-1.3 6-3v-3.5l-6 3-6-3Z"/></svg>
+    <span>Learn</span>
+  </button>
+  <button class="tab" data-tab="library" role="tab">
+    <svg viewBox="0 0 24 24"><path d="M4 4h4v16H4V4Zm6 0h4v16h-4V4Zm6.6.4 3.9 1-3.8 15.1-3.9-1L16.6 4.4Z"/></svg>
+    <span>Library</span>
+    <em id="libBadge" class="badge" hidden>0</em>
+  </button>
+  <button class="tab" data-tab="analyze" role="tab">
+    <svg viewBox="0 0 24 24"><path d="M5 3h2v18H5V3Zm12 6h2v12h-2V9ZM11 12h2v9h-2v-9Z"/></svg>
+    <span>Analyze</span>
+  </button>
+</nav>
+
+<main>
+
+  <!-- ───────── LEARN ───────── -->
+  <section id="tab-learn" class="panel active">
+    <div class="card">
+      <label class="field-label" for="topicInput">What do you want to learn?</label>
+      <form id="queryForm" autocomplete="off">
+        <div class="search">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5Zm-6 0a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9Z"/></svg>
+          <input id="topicInput" type="text" placeholder="e.g. Neyman factorization, Bayes theorem…" required>
+        </div>
+
+        <div class="chips" id="chips">
+          <button type="button">Sufficient Statistic</button>
+          <button type="button">Central Limit Theorem</button>
+          <button type="button">Stratified Sampling</button>
+          <button type="button">Type I &amp; Type II Error</button>
+          <button type="button">Chi-square Test</button>
+          <button type="button">ANOVA</button>
+        </div>
+
+        <div class="opt-row">
+          <div class="opt">
+            <span class="opt-label">Language</span>
+            <div class="seg" id="langSeg">
+              <button type="button" data-v="english">English</button>
+              <button type="button" data-v="hinglish" class="on">Hinglish</button>
+              <button type="button" data-v="hindi">हिन्दी</button>
+            </div>
+          </div>
+          <div class="opt">
+            <span class="opt-label">Level</span>
+            <div class="seg" id="levelSeg">
+              <button type="button" data-v="basic" class="on">BSc</button>
+              <button type="button" data-v="advanced">MSc</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn primary big" id="askBtn" type="submit">
+          <span class="btn-text">Explain this topic</span>
+          <span class="spinner" hidden></span>
+        </button>
+      </form>
+    </div>
+
+    <div id="skeleton" class="skeleton" hidden>
+      <div class="sk-line w60"></div><div class="sk-line"></div><div class="sk-line"></div><div class="sk-line w80"></div>
+      <div class="sk-line w40"></div><div class="sk-line"></div><div class="sk-line w70"></div>
+      <p class="sk-msg">Reading your books and preparing the explanation…</p>
+    </div>
+
+    <div id="errorBox" class="alert error" hidden></div>
+
+    <div id="result" hidden>
+      <div class="result-head">
+        <div>
+          <h2 id="resultTitle"></h2>
+          <div class="meta" id="resultMeta"></div>
+        </div>
+        <button class="btn ghost small" id="copyBtn" type="button">Copy</button>
+      </div>
+      <div id="sections"></div>
+      <details id="refs" class="refs" hidden>
+        <summary>Book references used</summary>
+        <div id="refsBody"></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ───────── LIBRARY ───────── -->
+  <section id="tab-library" class="panel">
+    <div class="card">
+      <h2 class="card-title">Add a book or notes</h2>
+      <p class="hint">PDF or .txt. Explanations use these first; when a topic isn’t covered, general knowledge fills the gap and is clearly labelled.</p>
+
+      <form id="uploadForm">
+        <label class="drop" id="drop">
+          <input type="file" id="bookFile" class="file-cover" accept=".pdf,.txt,application/pdf,text/plain">
+          <svg viewBox="0 0 24 24"><path d="M19.4 10a7.5 7.5 0 0 0-14.3-2A6 6 0 0 0 6 20h13a5 5 0 0 0 .4-10ZM13 13v4h-2v-4H8l4-4 4 4h-3Z"/></svg>
+          <strong id="dropTitle">Tap to choose a file</strong>
+          <span id="dropSub">PDF or TXT · up to 300 MB</span>
+        </label>
+        <input class="text-input" id="topicTag" type="text" placeholder="Optional tag (e.g. Inference, Probability)">
+        <button class="btn primary big" id="uploadBtn" type="submit" disabled>
+          <span class="btn-text">Upload &amp; index</span>
+        </button>
+      </form>
+
+      <div id="progressBox" class="progress-box" hidden>
+        <div class="bar"><div class="fill" id="barFill"></div></div>
+        <div class="progress-row"><span id="progMsg">Starting…</span><b id="progPct">0%</b></div>
+      </div>
+      <div id="uploadAlert" class="alert" hidden></div>
+    </div>
+
+    <div class="card">
+      <h2 class="card-title">Your library</h2>
+      <div id="libSummary" class="hint">Loading…</div>
+      <div id="bookList"></div>
+    </div>
+  </section>
+
+  <!-- ───────── ANALYZE (Industry Engine) ───────── -->
+  <section id="tab-analyze" class="panel">
+    <div class="card">
+      <div class="card-title-row">
+        <h2 class="card-title">Industry Analysis Engine</h2>
+        <span class="pill adv">Advanced</span>
+      </div>
+      <p class="hint">Upload a dataset, describe your objective in plain language. The AI picks the right statistical method; every number is computed by code (pandas/SciPy), never guessed — full calculation steps are shown.</p>
+
+      <form id="datasetForm">
+        <label class="drop" id="dropDs">
+          <input type="file" id="datasetFile" class="file-cover" accept=".csv,.tsv,.xlsx,.xls,text/csv">
+          <svg viewBox="0 0 24 24"><path d="M19.4 10a7.5 7.5 0 0 0-14.3-2A6 6 0 0 0 6 20h13a5 5 0 0 0 .4-10ZM13 13v4h-2v-4H8l4-4 4 4h-3Z"/></svg>
+          <strong id="dropDsTitle">Tap to choose a dataset</strong>
+          <span id="dropDsSub">CSV, TSV or Excel</span>
+        </label>
+      </form>
+      <div id="dsAlert" class="alert" hidden></div>
+
+      <div id="dsProfile" class="ds-profile" hidden>
+        <div class="ds-summary" id="dsSummary"></div>
+        <div class="ds-cols" id="dsCols"></div>
+      </div>
+    </div>
+
+    <div class="card" id="objectiveCard" hidden>
+      <label class="field-label" for="objectiveInput">What do you want to find out?</label>
+      <textarea id="objectiveInput" rows="3" placeholder="e.g. Does the vaccine group have a lower infection rate than placebo? Is income related to region? Compare satisfaction before vs after…"></textarea>
+      <div class="opt-row">
+        <div class="opt">
+          <span class="opt-label">Report language</span>
+          <div class="seg" id="analyzeLangSeg">
+            <button type="button" data-v="english" class="on">English</button>
+            <button type="button" data-v="hinglish">Hinglish</button>
+            <button type="button" data-v="hindi">हिन्दी</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn primary big" id="analyzeBtn" type="button">
+        <span class="btn-text">Run analysis</span>
+        <span class="spinner" hidden></span>
+      </button>
+      <button class="btn ghost small" id="pickManualBtn" type="button" style="margin-top:10px">Or pick the method myself</button>
+      <div id="manualPicker" class="manual-picker" hidden></div>
+    </div>
+
+    <div id="analyzeSkeleton" class="skeleton" hidden>
+      <div class="sk-line w60"></div><div class="sk-line"></div><div class="sk-line w80"></div>
+      <div class="sk-line w40"></div><div class="sk-line"></div>
+      <p class="sk-msg">Choosing the right method and computing the result…</p>
+    </div>
+    <div id="analyzeError" class="alert error" hidden></div>
+
+    <div id="analyzeResult" hidden>
+      <div class="card plan-card">
+        <div class="plan-row"><b id="planTitle"></b><span class="pill" id="reliabilityPill"></span></div>
+        <p class="hint" id="planReasoning"></p>
+        <div id="fallbackNote" class="alert" hidden></div>
+      </div>
+
+      <div id="analyzeSections"></div>
+
+      <details class="refs" id="stepsDetails">
+        <summary>Show full calculation (step by step)</summary>
+        <div id="stepsBody"></div>
+      </details>
+
+      <details class="refs" id="reliabilityDetails">
+        <summary>Reliability factors</summary>
+        <div id="reliabilityBody"></div>
+      </details>
+    </div>
+  </section>
+
+</main>
+
+<footer>StatVerse · numbers come from code, explanations from AI — always source-tagged</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

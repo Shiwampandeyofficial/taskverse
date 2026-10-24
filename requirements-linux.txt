@@ -1,0 +1,26 @@
+# Linux Production Requirements for StatVerse
+# -------------------------------------------------------------
+# PyTorch CPU index: drastically reduces install size from ~2.5GB (CUDA) to ~180MB
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch>=2.2.0
+
+# Production WSGI server for Linux
+gunicorn>=22.0.0
+
+# Web Framework & Environment
+flask>=3.0
+python-dotenv>=1.0
+
+# Vector Database & Embeddings
+chromadb>=0.5.5
+sentence-transformers>=3.0
+
+# Document & Data Processing
+pypdf>=4.3
+numpy>=1.26
+scipy>=1.11
+pandas>=2.1
+openpyxl>=3.1
+
+# AI / LLM Provider
+groq>=0.11
